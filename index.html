@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trump Wire</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trump Wire">
+<meta name="theme-color" content="#14161a">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACA0lEQVR4nO3dMU4CQBBAUSAewVjYaUVBzYmsTEw4igkJFSeipqCSq9ha8AuLZTV57wCTLX6mnF0+Pj0v4JbV7Afwd4mDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA7Sw7jRX/uXccP56fXjOmKszUESB0kcJHGQxEESB0kcJHGQlj4ApNgcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB2ngBePL+TRu+H+03mxnP+F3bA6SOEjiIImDJA6SOEjiIImD5IIxyeYgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SAMvGL+978YNv6fj4XP2E+awOUjiIImDJA6SOEjiIImDJA6SC8Ykm4MkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDtI30WsLe/E6lKQAAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACA0lEQVR4nO3dMU4CQBBAUSAewVjYaUVBzYmsTEw4igkJFSeipqCSq9ha8AuLZTV57wCTLX6mnF0+Pj0v4JbV7Afwd4mDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA7Sw7jRX/uXccP56fXjOmKszUESB0kcJHGQxEESB0kcJHGQlj4ApNgcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB0kcJHGQxEESB2ngBePL+TRu+H+03mxnP+F3bA6SOEjiIImDJA6SOEjiIImD5IIxyeYgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SAMvGL+978YNv6fj4XP2E+awOUjiIImDJA6SOEjiIImDJA6SC8Ykm4MkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDtI30WsLe/E6lKQAAAAASUVORK5CYII=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14161a; --slate:#1c1f26; --line:#2a2f38;
+  --paper:#eceae4; --muted:#868d99;
+  --amber:#f2a93b; --teal:#5b9ea6;
+  --pad: 14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--ink);color:var(--paper)}
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:15px; line-height:1.45;
+  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+  overscroll-behavior-y:contain;
+}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Kopfzeile ---------- */
+header{
+  position:sticky; top:0; z-index:20; background:rgba(20,22,26,.94);
+  backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top)) var(--pad) 0;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:22px;display:flex;flex-direction:column;gap:3px}
+.mark i{height:3px;display:block;background:var(--amber)}
+.mark i:nth-child(2){background:var(--paper);width:78%}
+.mark i:nth-child(3){background:var(--muted);width:56%}
+h1{
+  font-family:'IBM Plex Sans Condensed',sans-serif;
+  font-weight:700; font-size:19px; letter-spacing:.14em;
+  text-transform:uppercase; margin:0; flex:1;
+}
+.status{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+  color:var(--muted); letter-spacing:.04em; text-align:right;
+}
+.status b{color:var(--amber);font-weight:600}
+#reload{
+  border:1px solid var(--line); background:var(--slate); color:var(--paper);
+  width:34px;height:34px;border-radius:9px;font-size:15px;cursor:pointer;
+  display:grid;place-items:center;
+}
+#reload.busy{color:var(--amber);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.chips{display:flex;gap:7px;overflow-x:auto;padding:11px 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:6px 11px;border-radius:99px;cursor:pointer;
+}
+.chip[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.chip.lang[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#08171a}
+
+/* ---------- Meldungen ---------- */
+main{padding:0 var(--pad)}
+.item{
+  display:grid;grid-template-columns:52px 1fr;gap:12px;
+  padding:15px 0;border-bottom:1px solid var(--line);position:relative;
+}
+.rail{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+  text-align:right;padding-top:1px;position:relative;
+}
+.rail::after{
+  content:"";position:absolute;right:-6.5px;top:5px;width:5px;height:5px;
+  border-radius:99px;background:var(--line);
+}
+.item.fresh .rail::after{background:var(--amber);box-shadow:0 0 0 3px rgba(242,169,59,.16)}
+.item.fresh .rail{color:var(--amber)}
+.meta{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:5px;
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap;
+}
+.tag{border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.tag.de{color:var(--teal);border-color:rgba(91,158,166,.4)}
+.tag.video{color:var(--amber);border-color:rgba(242,169,59,.4)}
+.head{
+  font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:600;
+  font-size:17px;line-height:1.25;margin:0 0 4px;
+}
+.snip{font-size:13px;color:var(--muted);margin:0;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.note{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);
+  padding:26px var(--pad);text-align:center;line-height:1.7;
+}
+.note b{color:var(--paper);font-weight:500}
+
+/* ---------- Einstellungen ---------- */
+#gear{
+  position:fixed;right:var(--pad);bottom:calc(16px + env(safe-area-inset-bottom));
+  width:44px;height:44px;border-radius:99px;border:1px solid var(--line);
+  background:var(--slate);color:var(--muted);font-size:17px;cursor:pointer;z-index:25;
+}
+dialog{
+  border:none;background:var(--slate);color:var(--paper);width:min(100%,520px);
+  border-radius:16px 16px 0 0;padding:20px var(--pad) calc(20px + env(safe-area-inset-bottom));
+  margin:auto auto 0;max-height:88vh;
+}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h2{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:16px;
+  letter-spacing:.1em;text-transform:uppercase;margin:0 0 16px}
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+input,select,textarea{
+  width:100%;background:var(--ink);border:1px solid var(--line);color:var(--paper);
+  border-radius:9px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;
+}
+textarea{min-height:74px;resize:vertical}
+.hint{font-size:11.5px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+.row{display:flex;gap:9px;margin-top:20px}
+.btn{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);
+  background:transparent;color:var(--paper);font-family:'IBM Plex Mono',monospace;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.btn.primary{background:var(--amber);border-color:var(--amber);color:#1a1204;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="mark"><i></i><i></i><i></i></span>
+    <h1>Trump Wire</h1>
+    <div class="status" id="status">start…</div>
+    <button id="reload" aria-label="Jetzt aktualisieren">↻</button>
+  </div>
+  <div class="chips" id="chips">
+    <button class="chip" data-f="all" aria-pressed="true">Alle</button>
+    <button class="chip" data-f="news" aria-pressed="false">News</button>
+    <button class="chip" data-f="interview" aria-pressed="false">Interviews</button>
+    <button class="chip" data-f="social" aria-pressed="false">Social</button>
+    <button class="chip lang" data-f="de" aria-pressed="false">DE</button>
+    <button class="chip lang" data-f="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main id="feed"></main>
+<div class="note" id="foot"></div>
+
+<button id="gear" aria-label="Einstellungen">⚙</button>
+
+<dialog id="cfg">
+  <h2>Einstellungen</h2>
+
+  <label for="iv">Aktualisierung</label>
+  <select id="iv">
+    <option value="120000">alle 2 Minuten</option>
+    <option value="300000">alle 5 Minuten</option>
+    <option value="900000">alle 15 Minuten</option>
+    <option value="0">nur manuell</option>
+  </select>
+
+  <label for="yt">YouTube API-Key (optional)</label>
+  <input id="yt" type="text" placeholder="AIza…" autocomplete="off" spellcheck="false">
+  <p class="hint">Ohne Key läuft die Interviews-Spalte nur über Nachrichtenquellen. Mit Key kommen Pressekonferenzen und Interview-Videos direkt aus der YouTube-Suche. Den Key in der Google Cloud Console auf deine Pages-Domain als HTTP-Referrer beschränken.</p>
+
+  <label for="feeds">Eigene RSS-Feeds</label>
+  <textarea id="feeds" spellcheck="false" placeholder="https://…/feed.xml
+https://…/rss"></textarea>
+  <p class="hint">Eine URL pro Zeile. Endet die URL auf <b>#social</b>, landen die Treffer in der Social-Spalte.</p>
+
+  <div class="row">
+    <button class="btn" id="wipe">Als gelesen</button>
+    <button class="btn primary" id="save">Speichern</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* ---------------- Einstellungen ---------------- */
+const DEF = { iv: 300000, yt: "", feeds: "" };
+const cfg = Object.assign({}, DEF, load("tw_cfg", {}));
+let seen = new Set(load("tw_seen", []));
+let filter = "all";
+let items = [], timer = null, running = false;
+
+function load(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch{ return d; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+
+/* ---------------- Quellen ---------------- */
+const GN = (q, de) => "https://news.google.com/rss/search?q=" + encodeURIComponent(q) +
+  (de ? "&hl=de&gl=DE&ceid=DE:de" : "&hl=en-US&gl=US&ceid=US:en");
+
+const SOURCES = [
+  { id:"gdelt",  kind:"news",      run:gdelt },
+  { id:"news-en",kind:"news",      run:()=>rss(GN("Trump when:1d"), "en", "news") },
+  { id:"news-de",kind:"news",      run:()=>rss(GN("Trump when:1d", true), "de", "news") },
+  { id:"itw-en", kind:"interview", run:()=>rss(GN('Trump interview OR "press conference" when:3d'), "en", "interview") },
+  { id:"itw-de", kind:"interview", run:()=>rss(GN("Trump Interview when:3d", true), "de", "interview") },
+  { id:"soc-en", kind:"social",    run:()=>rss(GN('Trump "Truth Social" when:2d'), "en", "social") },
+  { id:"soc-de", kind:"social",    run:()=>rss(GN('Trump "Truth Social" when:2d', true), "de", "social") },
+];
+
+/* Browser dürfen die meisten Feeds nicht direkt laden – zwei Proxys als Rückfallebene. */
+const PROXIES = [
+  u => u,
+  u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
+];
+
+async function grab(url){
+  let last;
+  for (const p of PROXIES){
+    try{
+      const r = await fetch(p(url), { cache:"no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const t = await r.text();
+      if (t.trim()) return t;
+      throw new Error("leer");
+    }catch(e){ last = e; }
+  }
+  throw last;
+}
+
+async function rss(url, lang, kind){
+  const xml = new DOMParser().parseFromString(await grab(url), "text/xml");
+  return [...xml.querySelectorAll("item, entry")].slice(0, 40).map(n => {
+    const raw = txt(n, "title");
+    const cut = raw.lastIndexOf(" - ");
+    const src = cut > 20 ? raw.slice(cut + 3) : (txt(n, "source") || host(link(n)));
+    return {
+      title: cut > 20 ? raw.slice(0, cut) : raw,
+      url: link(n),
+      src, lang, kind,
+      time: Date.parse(txt(n,"pubDate") || txt(n,"published") || txt(n,"updated")) || Date.now(),
+      snip: strip(txt(n,"description") || txt(n,"summary")),
+      video: /youtube\.com|youtu\.be/.test(link(n)),
+    };
+  });
+}
+
+async function gdelt(){
+  const u = "https://api.gdeltproject.org/api/v2/doc/doc?query=Trump&mode=artlist" +
+            "&maxrecords=60&sort=datedesc&format=json";
+  const data = JSON.parse(await grab(u));
+  return (data.articles || [])
+    .filter(a => /english|german/i.test(a.language || ""))
+    .map(a => ({
+      title: a.title, url: a.url, src: a.domain,
+      lang: /german/i.test(a.language) ? "de" : "en",
+      kind: /interview|press conference/i.test(a.title||"") ? "interview" : "news",
+      time: gdeltDate(a.seendate), snip: "", video:false,
+    }));
+}
+function gdeltDate(s){
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/.exec(s || "");
+  return m ? Date.UTC(+m[1], m[2]-1, +m[3], +m[4], +m[5], +m[6]) : Date.now();
+}
+
+async function youtube(){
+  const u = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video" +
+    "&order=date&maxResults=25&q=" + encodeURIComponent("Trump interview") + "&key=" + cfg.yt;
+  const r = await fetch(u);
+  if (!r.ok) throw new Error("YouTube " + r.status);
+  const d = await r.json();
+  return (d.items || []).map(v => ({
+    title: decode(v.snippet.title),
+    url: "https://www.youtube.com/watch?v=" + v.id.videoId,
+    src: v.snippet.channelTitle,
+    lang: /\b(der|die|das|und|mit|über|für)\b/i.test(v.snippet.title) ? "de" : "en",
+    kind: "interview",
+    time: Date.parse(v.snippet.publishedAt),
+    snip: decode(v.snippet.description), video: true,
+  }));
+}
+
+function custom(){
+  return cfg.feeds.split("\n").map(s => s.trim()).filter(Boolean).map(line => {
+    const social = line.endsWith("#social");
+    const url = social ? line.slice(0, -7) : line;
+    return { id: host(url), kind: social ? "social" : "news",
+             run: () => rss(url, "en", social ? "social" : "news") };
+  });
+}
+
+/* ---------------- Hilfsfunktionen ---------------- */
+const txt = (n, t) => n.querySelector(t)?.textContent?.trim() || "";
+const link = n => n.querySelector("link")?.textContent?.trim() ||
+                  n.querySelector("link")?.getAttribute("href") || "#";
+const host = u => { try{ return new URL(u).hostname.replace(/^www\./,""); }catch{ return "Quelle"; } };
+const strip = h => decode(h.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ")).trim();
+function decode(s){ const d = document.createElement("textarea"); d.innerHTML = s || ""; return d.value; }
+const key = it => it.title.toLowerCase().replace(/[^a-z0-9äöüß]/g, "").slice(0, 60);
+
+function ago(t){
+  const m = Math.round((Date.now() - t) / 60000);
+  if (m < 1) return "jetzt";
+  if (m < 60) return m + " min";
+  const h = Math.round(m / 60);
+  if (h < 24) return h + " Std";
+  return Math.round(h / 24) + " Tg";
+}
+const clock = t => new Date(t).toLocaleTimeString("de-DE", { hour:"2-digit", minute:"2-digit" });
+
+/* ---------------- Laden ---------------- */
+async function refresh(){
+  if (running) return;
+  running = true;
+  document.getElementById("reload").classList.add("busy");
+  setStatus("lade…");
+
+  const list = [...SOURCES, ...custom()];
+  if (cfg.yt) list.push({ id:"youtube", kind:"interview", run:youtube });
+
+  const res = await Promise.allSettled(list.map(s => s.run()));
+  const bad = [], seenKeys = new Map();
+
+  res.forEach((r, i) => {
+    if (r.status === "rejected") { bad.push(list[i].id); return; }
+    for (const it of r.value){
+      if (!it.title || !it.url || it.url === "#") continue;
+      const k = key(it);
+      if (!k || seenKeys.has(k)) continue;
+      seenKeys.set(k, it);
+    }
+  });
+
+  if (seenKeys.size){
+    items = [...seenKeys.values()].sort((a,b) => b.time - a.time).slice(0, 220);
+  }
+  running = false;
+  document.getElementById("reload").classList.remove("busy");
+  if (!seen.size && items.length){ seen = new Set(items.map(key)); save("tw_seen", [...seen]); }
+  render(bad, list.length);
+}
+
+/* ---------------- Anzeige ---------------- */
+function render(bad = [], total = 0){
+  const feed = document.getElementById("feed");
+  const show = items.filter(it =>
+    filter === "all" ? true :
+    (filter === "de" || filter === "en") ? it.lang === filter : it.kind === filter);
+
+  if (!show.length){
+    feed.innerHTML = `<p class="note">${items.length
+      ? "Keine Meldungen in diesem Filter."
+      : "Noch nichts geladen. Tippe oben auf ↻ – falls das leer bleibt, blockiert das Netz gerade die Proxys."}</p>`;
+  } else {
+    feed.innerHTML = show.map(it => {
+      const fresh = !seen.has(key(it));
+      return `<a class="item${fresh ? " fresh" : ""}" href="${it.url}" target="_blank" rel="noopener">
+        <div class="rail">${clock(it.time)}</div>
+        <div>
+          <div class="meta">
+            <span>${esc(it.src).slice(0,28)}</span>
+            <span class="tag ${it.lang}">${it.lang.toUpperCase()}</span>
+            ${it.video ? '<span class="tag video">Video</span>' : ""}
+            <span>${ago(it.time)}</span>
+          </div>
+          <p class="head">${esc(it.title)}</p>
+          ${it.snip ? `<p class="snip">${esc(it.snip)}</p>` : ""}
+        </div></a>`;
+    }).join("");
+  }
+
+  const neu = items.filter(it => !seen.has(key(it))).length;
+  setStatus(`${clock(Date.now())}${neu ? " · <b>" + neu + " neu</b>" : ""}`);
+  document.getElementById("foot").innerHTML = items.length
+    ? `${items.length} Meldungen aus ${total - bad.length}/${total} Quellen` +
+      (bad.length ? `<br>keine Antwort: ${bad.join(", ")}` : "")
+    : "";
+}
+const esc = s => (s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const setStatus = h => document.getElementById("status").innerHTML = h;
+
+function markRead(){
+  seen = new Set(items.map(key));
+  save("tw_seen", [...seen].slice(0, 800));
+  render();
+}
+
+/* ---------------- Bedienung ---------------- */
+document.getElementById("chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  filter = b.dataset.f;
+  [...e.currentTarget.children].forEach(c => c.setAttribute("aria-pressed", c === b));
+  render();
+});
+document.getElementById("reload").onclick = () => { markRead(); refresh(); };
+
+const dlg = document.getElementById("cfg");
+document.getElementById("gear").onclick = () => {
+  iv.value = String(cfg.iv); yt.value = cfg.yt; feeds.value = cfg.feeds;
+  dlg.showModal();
+};
+document.getElementById("save").onclick = () => {
+  cfg.iv = +iv.value; cfg.yt = yt.value.trim(); cfg.feeds = feeds.value;
+  save("tw_cfg", cfg); dlg.close(); schedule(); refresh();
+};
+document.getElementById("wipe").onclick = () => { markRead(); dlg.close(); };
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+function schedule(){
+  clearInterval(timer);
+  if (cfg.iv > 0) timer = setInterval(refresh, cfg.iv);
+}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && cfg.iv > 0) refresh();
+});
+
+schedule();
+refresh();
+</script>
+</body>
+</html>
