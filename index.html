@@ -70,6 +70,8 @@ h1{
 }
 .chip[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
 .chip.lang[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#08171a}
+.chip.mkt{color:var(--amber);border-color:rgba(242,169,59,.4)}
+.chip.mkt[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#1a1204}
 
 /* ---------- Meldungen ---------- */
 main{padding:0 var(--pad)}
@@ -95,6 +97,11 @@ main{padding:0 var(--pad)}
 .tag{border:1px solid var(--line);border-radius:4px;padding:1px 5px}
 .tag.de{color:var(--teal);border-color:rgba(91,158,166,.4)}
 .tag.video{color:var(--amber);border-color:rgba(242,169,59,.4)}
+.tag.mkt{color:var(--amber);border-color:rgba(242,169,59,.45);background:rgba(242,169,59,.09)}
+.item.mkt::before{
+  content:"";position:absolute;left:-14px;top:0;bottom:0;width:2px;
+  background:linear-gradient(rgba(242,169,59,.7),rgba(242,169,59,.06));
+}
 .head{
   font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:600;
   font-size:17px;line-height:1.25;margin:0 0 4px;
@@ -149,6 +156,7 @@ textarea{min-height:74px;resize:vertical}
   </div>
   <div class="chips" id="chips">
     <button class="chip" data-f="all" aria-pressed="true">Alle</button>
+    <button class="chip mkt" data-f="markt" aria-pressed="false">Markt</button>
     <button class="chip" data-f="news" aria-pressed="false">News</button>
     <button class="chip" data-f="interview" aria-pressed="false">Interviews</button>
     <button class="chip" data-f="social" aria-pressed="false">Social</button>
@@ -369,7 +377,8 @@ async function refresh(){
 function render(bad = [], total = 0, done = 0){
   const feed = document.getElementById("feed");
   const show = items.filter(it =>
-    filter === "all" ? true :
+    filter === "all"   ? true :
+    filter === "markt" ? topicsOf(it).score >= 2 :
     (filter === "de" || filter === "en") ? it.lang === filter : it.kind === filter);
 
   if (!show.length){
@@ -381,13 +390,15 @@ function render(bad = [], total = 0, done = 0){
       const fresh = !seen.has(key(it));
       const de = trCache.get(key(it));
       const sn = de ? it.title : useSnip(it);
-      return `<a class="item${fresh ? " fresh" : ""}" href="${it.url}" target="_blank" rel="noopener">
+      const tp = topicsOf(it);
+      return `<a class="item${fresh ? " fresh" : ""}${tp.score >= 2 ? " mkt" : ""}" href="${it.url}" target="_blank" rel="noopener">
         <div class="rail">${clock(it.time)}</div>
         <div>
           <div class="meta">
             <span>${esc(it.src).slice(0,28)}</span>
             <span class="tag ${de ? "de" : it.lang}">${de ? "EN→DE" : it.lang.toUpperCase()}</span>
             ${it.video ? '<span class="tag video">Video</span>' : ""}
+            ${tp.hit.map(h => `<span class="tag mkt">${h}</span>`).join("")}
             <span>${ago(it.time)}</span>
           </div>
           <p class="head">${esc(de || it.title)}</p>
@@ -401,7 +412,8 @@ function render(bad = [], total = 0, done = 0){
     ? `lädt ${done}/${total}`
     : `${clock(Date.now())}${neu ? " · <b>" + neu + " neu</b>" : ""}`);
   document.getElementById("foot").innerHTML = items.length
-    ? `${items.length} Meldungen aus ${total - bad.length}/${total} Quellen` +
+    ? `${items.length} Meldungen aus ${total - bad.length}/${total} Quellen · ` +
+      `${items.filter(it => topicsOf(it).score >= 2).length} marktrelevant` +
       (bad.length ? `<br>keine Antwort: ${bad.join(", ")}` : "")
     : "";
 }
@@ -414,6 +426,28 @@ function useSnip(it){
   const b = it.title.toLowerCase().replace(/[^a-z0-9äöüß]/g,"");
   if (!a || a.startsWith(b.slice(0, 40)) || a.length < b.length + 25) return "";
   return it.snip;
+}
+
+/* ---------------- Marktrelevanz ---------------- */
+const TOPICS = [
+  ["ÖL",      3, /\b(brent|wti|crude|rohöl|ölpreis|ölmarkt|petroleum|opec|barrel|raffiner|refiner|pipeline|bohrung|drilling|ölreserve|fracking)|\boil\b/i],
+  ["IRAN",    3, /\b(iran|hormuz|hormus|teheran|tehran|huthi|houthi|rotes meer|red sea|straße von|strait of)/i],
+  ["ZÖLLE",   2, /\b(tariff|zoll|zölle|handelskrieg|trade war|einfuhr|import dut|exportverbot|export ban|sanktion|sanction|embargo|handelsabkommen|trade deal)/i],
+  ["ENERGIE", 2, /\b(lng|erdgas|natural gas|benzinpreis|gas price|energiepreis|energy price|strompreis|keystone|nord stream)/i],
+  ["RUSSLAND",2, /\b(russland|russia|russisch|ukraine|putin|price cap|preisdeckel)/i],
+  ["FED",     2, /\b(federal reserve|powell|leitzins|interest rate|zinssatz|zinssenkung|inflation|rezession|recession)|\b(fed|cpi)\b/i],
+  ["METALLE", 2, /\b(silber|silver|comex|kupfer|copper|seltene erden|rare earth)|\b(gold)\b/i],
+  ["MÄRKTE",  1, /\b(aktien|stock market|wall street|dow jones|nasdaq|anleihe|treasury|börse)|\b(s&p|dollar)\b/i],
+];
+
+function topicsOf(it){
+  const t = (it.title + " " + (it.snip || "")).toLowerCase();
+  const hit = [];
+  let score = 0;
+  for (const [name, w, re] of TOPICS){
+    if (re.test(t)){ hit.push(name); score += w; }
+  }
+  return { hit: hit.slice(0, 2), score };
 }
 
 /* ---------------- Übersetzung ---------------- */
