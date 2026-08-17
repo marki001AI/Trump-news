@@ -26,7 +26,7 @@ html,body{margin:0;padding:0;background:var(--ink);color:var(--paper)}
 body{
   font-family:'IBM Plex Sans',system-ui,sans-serif;
   font-size:15px; line-height:1.45;
-  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+  padding-bottom:calc(96px + env(safe-area-inset-bottom));
   overscroll-behavior-y:contain;
 }
 a{color:inherit;text-decoration:none}
@@ -368,6 +368,7 @@ function render(bad = [], total = 0, done = 0){
   } else {
     feed.innerHTML = show.map(it => {
       const fresh = !seen.has(key(it));
+        const sn = useSnip(it);
       return `<a class="item${fresh ? " fresh" : ""}" href="${it.url}" target="_blank" rel="noopener">
         <div class="rail">${clock(it.time)}</div>
         <div>
@@ -378,7 +379,7 @@ function render(bad = [], total = 0, done = 0){
             <span>${ago(it.time)}</span>
           </div>
           <p class="head">${esc(it.title)}</p>
-          ${it.snip ? `<p class="snip">${esc(it.snip)}</p>` : ""}
+          ${sn ? `<p class="snip">${esc(sn)}</p>` : ""}
         </div></a>`;
     }).join("");
   }
@@ -394,6 +395,14 @@ function render(bad = [], total = 0, done = 0){
 }
 const esc = s => (s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const setStatus = h => document.getElementById("status").innerHTML = h;
+
+function useSnip(it){
+  if (!it.snip) return "";
+  const a = it.snip.toLowerCase().replace(/[^a-z0-9äöüß]/g,"");
+  const b = it.title.toLowerCase().replace(/[^a-z0-9äöüß]/g,"");
+  if (!a || a.startsWith(b.slice(0, 40)) || a.length < b.length + 25) return "";
+  return it.snip;
+}
 
 function markRead(){
   seen = new Set(items.map(key));
