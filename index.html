@@ -219,19 +219,24 @@ const SOURCES = [
 const PROXIES = [
   u => u,
   u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  u => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u),
   u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
 ];
+const TIMEOUT = 8000;
 
 async function grab(url){
   let last;
   for (const p of PROXIES){
+    const stop = new AbortController();
+    const t = setTimeout(() => stop.abort(), TIMEOUT);
     try{
-      const r = await fetch(p(url), { cache:"no-store" });
+      const r = await fetch(p(url), { cache:"no-store", signal: stop.signal });
       if (!r.ok) throw new Error("HTTP " + r.status);
-      const t = await r.text();
-      if (t.trim()) return t;
-      throw new Error("leer");
+      const body = await r.text();
+      if (!body.trim()) throw new Error("leer");
+      return body;
     }catch(e){ last = e; }
+    finally{ clearTimeout(t); }
   }
   throw last;
 }
@@ -326,22 +331,23 @@ async function refresh(){
   const list = [...SOURCES, ...custom()];
   if (cfg.yt) list.push({ id:"youtube", kind:"interview", run:youtube });
 
-  const res = await Promise.allSettled(list.map(s => s.run()));
-  const bad = [], seenKeys = new Map();
+  const pool = new Map(items.map(it => [key(it), it]));
+  const bad = [];
+  let done = 0;
 
-  res.forEach((r, i) => {
-    if (r.status === "rejected") { bad.push(list[i].id); return; }
-    for (const it of r.value){
-      if (!it.title || !it.url || it.url === "#") continue;
-      const k = key(it);
-      if (!k || seenKeys.has(k)) continue;
-      seenKeys.set(k, it);
-    }
-  });
+  await Promise.all(list.map(async s => {
+    try{
+      for (const it of await s.run()){
+        if (!it.title || !it.url || it.url === "#") continue;
+        const k = key(it);
+        if (k && !pool.has(k)) pool.set(k, it);
+      }
+    }catch(e){ bad.push(s.id); }
+    done++;
+    items = [...pool.values()].sort((a,b) => b.time - a.time).slice(0, 220);
+    render(bad, list.length, done);
+  }));
 
-  if (seenKeys.size){
-    items = [...seenKeys.values()].sort((a,b) => b.time - a.time).slice(0, 220);
-  }
   running = false;
   document.getElementById("reload").classList.remove("busy");
   if (!seen.size && items.length){ seen = new Set(items.map(key)); save("tw_seen", [...seen]); }
@@ -349,7 +355,7 @@ async function refresh(){
 }
 
 /* ---------------- Anzeige ---------------- */
-function render(bad = [], total = 0){
+function render(bad = [], total = 0, done = 0){
   const feed = document.getElementById("feed");
   const show = items.filter(it =>
     filter === "all" ? true :
@@ -378,7 +384,9 @@ function render(bad = [], total = 0){
   }
 
   const neu = items.filter(it => !seen.has(key(it))).length;
-  setStatus(`${clock(Date.now())}${neu ? " · <b>" + neu + " neu</b>" : ""}`);
+  setStatus(total && done < total
+    ? `lädt ${done}/${total}`
+    : `${clock(Date.now())}${neu ? " · <b>" + neu + " neu</b>" : ""}`);
   document.getElementById("foot").innerHTML = items.length
     ? `${items.length} Meldungen aus ${total - bad.length}/${total} Quellen` +
       (bad.length ? `<br>keine Antwort: ${bad.join(", ")}` : "")
