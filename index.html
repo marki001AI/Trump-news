@@ -173,6 +173,16 @@ textarea{min-height:74px;resize:vertical}
     <option value="0">nur manuell</option>
   </select>
 
+  <label for="tr">Englische Meldungen übersetzen</label>
+  <select id="tr">
+    <option value="off">aus – Originaltitel</option>
+    <option value="on">an – ins Deutsche</option>
+  </select>
+
+  <label for="ak">Anthropic API-Key (optional)</label>
+  <input id="ak" type="text" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+  <p class="hint">Mit Key übersetzt Claude Haiku – deutlich treffender bei politischen Begriffen. Ohne Key läuft es über den kostenlosen MyMemory-Dienst mit Tageslimit. Der Key wird nur auf diesem Gerät gespeichert.</p>
+
   <label for="yt">YouTube API-Key (optional)</label>
   <input id="yt" type="text" placeholder="AIza…" autocomplete="off" spellcheck="false">
   <p class="hint">Ohne Key läuft die Interviews-Spalte nur über Nachrichtenquellen. Mit Key kommen Pressekonferenzen und Interview-Videos direkt aus der YouTube-Suche. Den Key in der Google Cloud Console auf deine Pages-Domain als HTTP-Referrer beschränken.</p>
@@ -192,7 +202,7 @@ https://…/rss"></textarea>
 "use strict";
 
 /* ---------------- Einstellungen ---------------- */
-const DEF = { iv: 300000, yt: "", feeds: "" };
+const DEF = { iv: 300000, yt: "", feeds: "", tr: "off", ak: "" };
 const cfg = Object.assign({}, DEF, load("tw_cfg", {}));
 let seen = new Set(load("tw_seen", []));
 let filter = "all";
@@ -351,7 +361,8 @@ async function refresh(){
   running = false;
   document.getElementById("reload").classList.remove("busy");
   if (!seen.size && items.length){ seen = new Set(items.map(key)); save("tw_seen", [...seen]); }
-  render(bad, list.length);
+  render(bad, list.length, list.length);
+  translatePending();
 }
 
 /* ---------------- Anzeige ---------------- */
@@ -368,17 +379,18 @@ function render(bad = [], total = 0, done = 0){
   } else {
     feed.innerHTML = show.map(it => {
       const fresh = !seen.has(key(it));
-        const sn = useSnip(it);
+      const de = trCache.get(key(it));
+      const sn = de ? it.title : useSnip(it);
       return `<a class="item${fresh ? " fresh" : ""}" href="${it.url}" target="_blank" rel="noopener">
         <div class="rail">${clock(it.time)}</div>
         <div>
           <div class="meta">
             <span>${esc(it.src).slice(0,28)}</span>
-            <span class="tag ${it.lang}">${it.lang.toUpperCase()}</span>
+            <span class="tag ${de ? "de" : it.lang}">${de ? "EN→DE" : it.lang.toUpperCase()}</span>
             ${it.video ? '<span class="tag video">Video</span>' : ""}
             <span>${ago(it.time)}</span>
           </div>
-          <p class="head">${esc(it.title)}</p>
+          <p class="head">${esc(de || it.title)}</p>
           ${sn ? `<p class="snip">${esc(sn)}</p>` : ""}
         </div></a>`;
     }).join("");
@@ -404,6 +416,64 @@ function useSnip(it){
   return it.snip;
 }
 
+/* ---------------- Übersetzung ---------------- */
+const trCache = new Map(Object.entries(load("tw_tr", {})));
+function saveTr(){
+  const o = {}; [...trCache].slice(-900).forEach(([k,v]) => o[k] = v);
+  save("tw_tr", o);
+}
+
+async function trClaude(lines){
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{
+      "content-type":"application/json",
+      "x-api-key": cfg.ak,
+      "anthropic-version":"2023-06-01",
+      "anthropic-dangerous-direct-browser-access":"true",
+    },
+    body: JSON.stringify({
+      model:"claude-haiku-4-5-20251001",
+      max_tokens:2000,
+      system:"Übersetze Nachrichten-Schlagzeilen ins Deutsche. Antworte ausschließlich mit einem JSON-Array aus Strings, gleiche Reihenfolge und Anzahl wie die Eingabe. Kein Markdown, keine Erklärung. Eigennamen unverändert lassen.",
+      messages:[{ role:"user", content: JSON.stringify(lines) }],
+    }),
+  });
+  if (!r.ok) throw new Error("Claude " + r.status);
+  const d = await r.json();
+  const txt = (d.content || []).map(c => c.text || "").join("").replace(/```json|```/g, "").trim();
+  const arr = JSON.parse(txt);
+  return Array.isArray(arr) ? arr : [];
+}
+
+async function trFree(lines){
+  const out = [];
+  for (const l of lines.slice(0, 12)){
+    try{
+      const r = await fetch("https://api.mymemory.translated.net/get?langpair=en|de&q=" +
+                            encodeURIComponent(l.slice(0, 480)));
+      const d = await r.json();
+      out.push(d?.responseData?.translatedText || "");
+    }catch{ out.push(""); }
+  }
+  return out;
+}
+
+async function translatePending(){
+  if (cfg.tr !== "on") return;
+  const todo = items.filter(it => it.lang === "en" && !trCache.has(key(it))).slice(0, 25);
+  if (!todo.length) return;
+  try{
+    const out = cfg.ak ? await trClaude(todo.map(i => i.title)) : await trFree(todo.map(i => i.title));
+    let hit = 0;
+    todo.forEach((it, i) => {
+      const t = (out[i] || "").trim();
+      if (t && t.toLowerCase() !== it.title.toLowerCase()){ trCache.set(key(it), t); hit++; }
+    });
+    if (hit){ saveTr(); render(); }
+  }catch(e){ console.warn("Übersetzung:", e.message); }
+}
+
 function markRead(){
   seen = new Set(items.map(key));
   save("tw_seen", [...seen].slice(0, 800));
@@ -422,11 +492,13 @@ document.getElementById("reload").onclick = () => { markRead(); refresh(); };
 const dlg = document.getElementById("cfg");
 document.getElementById("gear").onclick = () => {
   iv.value = String(cfg.iv); yt.value = cfg.yt; feeds.value = cfg.feeds;
+  tr.value = cfg.tr; ak.value = cfg.ak;
   dlg.showModal();
 };
 document.getElementById("save").onclick = () => {
   cfg.iv = +iv.value; cfg.yt = yt.value.trim(); cfg.feeds = feeds.value;
-  save("tw_cfg", cfg); dlg.close(); schedule(); refresh();
+  cfg.tr = tr.value; cfg.ak = ak.value.trim();
+  save("tw_cfg", cfg); dlg.close(); schedule(); render(); translatePending(); refresh();
 };
 document.getElementById("wipe").onclick = () => { markRead(); dlg.close(); };
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
